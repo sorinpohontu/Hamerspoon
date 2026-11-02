@@ -1,0 +1,20 @@
+# Temporary files
+.DS_Store
+
+# Personal configuration (copy from config.lua.sample)
+Spoons/*/config.lua
+
+# Runtime state and task output
+Spoons/ScheduledTask.spoon/state.json
+logs/
+
+# Local docs and test
+docs
+tests
+
+# Local config
+CLAUDE.md
+.claude/settings.local.json
+
+
+

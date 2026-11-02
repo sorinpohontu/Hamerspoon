@@ -1,0 +1,119 @@
+--- WindowManager.spoon Configuration File
+---
+--- Copy this file to config.lua and customize for your needs.
+--- Configuration is optional - you can set values programmatically in init.lua as well.
+
+return {
+	--- Set to false to load the Spoon without starting it (no hotkeys)
+	--- Default: true
+	enabled = true,
+
+	--- Logger verbosity: "verbose", "debug", "info", "warning", "error"
+	--- Default: "info"
+	logLevel = "info",
+
+	--- Show/hide alert messages for window operations
+	--- Default: true
+	showAlerts = true,
+
+	--- Frame offsets to account for macOS window decorations
+	--- Offsets: {x = horizontal gap, y = top offset, h = bottom offset}
+	--- Partial tables are merged with the defaults, e.g. {y = 0} keeps x and h
+	--- Default: {x = 2, y = 2, h = 6}
+	frameOffset = {x = 2, y = 2, h = 6},
+
+	--- Hotkey bindings for window operations
+	--- Each action can have a single hotkey or multiple hotkeys
+	--- Format for single hotkey: {modifiers, key}
+	--- Format for multiple hotkeys: {{modifiers, key}, {modifiers, key}, ...}
+	--- Modifiers: "cmd", "alt", "ctrl", "shift"
+	---
+	--- Available actions:
+	---   center - Center window on screen
+	---   topRight - Move window to top right corner
+	---   halfLeft - Move window to left half of screen
+	---   halfRight - Move window to right half of screen
+	---   fullDesktop - Resize window to fill entire screen
+	---
+	--- Default hotkeys shown below
+	hotkeys = {
+		center = {{{"cmd", "alt", "ctrl"}, "C"}, {nil, "F16"}},  -- Two hotkeys for center
+		topRight = {{"cmd", "shift"}, "T"},
+		halfLeft = {{"cmd", "shift"}, "["},
+		halfRight = {{"cmd", "shift"}, "]"},
+		fullDesktop = {{{"cmd", "shift"}, "0"}, {nil, "F13"}},  -- Two hotkeys for fullDesktop
+	},
+}
+
+---
+--- CONFIGURATION EXAMPLES
+---
+
+--- Example 1: Basic configuration with custom alerts and offsets
+-- return {
+--     showAlerts = false,  -- Don't show alert messages
+--     frameOffset = {x = 0, y = 0, h = 0},  -- No offsets for decorations
+--     hotkeys = {
+--         center = {{"cmd", "alt"}, "C"},
+--         halfLeft = {{"cmd", "alt"}, "Left"},
+--         halfRight = {{"cmd", "alt"}, "Right"},
+--         fullDesktop = {{"cmd", "alt"}, "F"},
+--     },
+-- }
+
+--- Example 2: Simple hotkeys without modifier combos
+-- return {
+--     showAlerts = true,
+--     hotkeys = {
+--         center = {nil, "F16"},          -- F16 key only
+--         topRight = {nil, "F17"},        -- F17 key only
+--         halfLeft = {nil, "F14"},        -- F14 key only
+--         halfRight = {nil, "F15"},       -- F15 key only
+--         fullDesktop = {nil, "F13"},     -- F13 key only
+--     },
+-- }
+
+--- Example 3: Multiple hotkeys per action for flexibility
+-- return {
+--     showAlerts = true,
+--     hotkeys = {
+--         -- Center has three different hotkey combinations
+--         center = {
+--             {{"cmd", "alt", "ctrl"}, "C"},
+--             {nil, "F16"},
+--             {{"cmd", "shift"}, "C"},
+--         },
+--         -- Left and right can use both bracket keys and arrow keys
+--         halfLeft = {
+--             {{"cmd", "shift"}, "["},
+--             {{"cmd", "alt"}, "Left"},
+--         },
+--         halfRight = {
+--             {{"cmd", "shift"}, "]"},
+--             {{"cmd", "alt"}, "Right"},
+--         },
+--         fullDesktop = {{"cmd", "shift"}, "F"},
+--     },
+-- }
+
+--- Example 4: Minimal configuration - only override what you need
+-- return {
+--     -- Keeps default alerts and offsets. Note: `hotkeys` replaces the whole
+--     -- default map, so actions not listed (topRight, fullDesktop) are unbound.
+--     hotkeys = {
+--         center = {{"cmd", "ctrl"}, "C"},
+--         halfLeft = {{"cmd", "ctrl"}, "H"},
+--         halfRight = {{"cmd", "ctrl"}, "L"},
+--     },
+-- }
+
+--- Example 5: Disable specific hotkeys by setting to nil
+-- return {
+--     hotkeys = {
+--         center = {{"cmd", "alt"}, "C"},
+--         topRight = nil,  -- Disable topRight hotkey
+--         halfLeft = {{"cmd", "alt"}, "H"},
+--         halfRight = {{"cmd", "alt"}, "L"},
+--         fullDesktop = nil,  -- Disable fullDesktop hotkey
+--     },
+-- }

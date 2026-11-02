@@ -1,0 +1,90 @@
+--- SqueezeliteManager.spoon Configuration File
+---
+--- Copy this file to config.lua and customize for your needs.
+--- Unknown keys and values of the wrong type are ignored with a warning in the Console.
+
+return {
+	--- Set to false to load the Spoon without starting it (no menu bar item)
+	--- Default: true
+	enabled = true,
+
+	--- Logger verbosity: "verbose", "debug", "info", "warning", "error"
+	--- Default: "info"
+	logLevel = "info",
+
+	--- Path to the Squeezelite binary
+	--- Required if you want to use the Spoon
+	squeezelitePath = "/Applications/Audio/Squeezelite.app/Contents/MacOS/Squeezelite",
+
+	--- Player name shown in the media server
+	--- Default: the computer name (as shown in the Finder sidebar)
+	-- playerName = "Living Room",
+
+	--- Table of command-line arguments to pass to Squeezelite
+	--- Default: {} (no arguments)
+	--- "-n <name>" is added automatically from playerName unless you pass -n here
+	--- Example arguments:
+	---   {"-s", "192.168.1.100"}  -- Connect to specific server
+	---   {"-o", "1"}               -- Output device (see `Squeezelite -l`)
+	squeezeliteArgs = {},
+
+	--- Start Squeezelite when the Spoon starts, if there is no remembered state
+	--- Default: true
+	autoStart = true,
+
+	--- Restore the last state (playing or stopped) after a reload or restart
+	--- Default: true
+	rememberState = true,
+
+	--- File that receives Squeezelite's output (rotated at 1 MB); "" discards it
+	--- Default: "~/.hammerspoon/logs/squeezelite.log"
+	logFile = "~/.hammerspoon/logs/squeezelite.log",
+
+	--- Interval in seconds for checking if Squeezelite is still running
+	--- Default: 5
+	checkInterval = 5,
+
+	--- Show/hide alert messages on state changes
+	--- Default: true
+	showAlerts = true,
+
+	--- Text to show in the menu bar instead of the built-in player icon
+	--- Default: nil (icon)
+	-- playIcon = "▶",    -- while stopped
+	-- pauseIcon = "▮▮",  -- while playing
+}
+
+---
+--- CONFIGURATION EXAMPLES
+---
+
+--- Example 1: Basic configuration with default settings
+-- return {
+--     squeezelitePath = "/Applications/Audio/Squeezelite.app/Contents/MacOS/Squeezelite",
+-- }
+
+--- Example 2: Connect to a specific server, start only when clicked
+-- return {
+--     squeezelitePath = "/Applications/Audio/Squeezelite.app/Contents/MacOS/Squeezelite",
+--     squeezeliteArgs = {"-s", "192.168.1.100:9000"},  -- Server IP and port
+--     autoStart = false,      -- Don't start on first run
+--     rememberState = false,  -- Don't restore after reloads either
+-- }
+
+--- Example 3: Named player with specific audio device
+-- return {
+--     squeezelitePath = "/Applications/Audio/Squeezelite.app/Contents/MacOS/Squeezelite",
+--     playerName = "MacBook Speaker",  -- Instead of the computer name
+--     squeezeliteArgs = {
+--         "-a", "default",             -- Audio output
+--         "-s", "192.168.1.50:9000"    -- Server address
+--     },
+--     showAlerts = false,
+-- }
+
+--- Example 4: Text instead of the menu bar icon
+-- return {
+--     squeezelitePath = "/Applications/Audio/Squeezelite.app/Contents/MacOS/Squeezelite",
+--     playIcon = "🔇",
+--     pauseIcon = "🔊",
+-- }

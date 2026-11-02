@@ -1,0 +1,29 @@
+--- CaffeinateControl.spoon Configuration File
+---
+--- Copy this file to config.lua and customize for your needs.
+--- Configuration is optional - defaults are used when config.lua is missing.
+--- Unknown keys and values of the wrong type are ignored with a warning in the Console.
+
+return {
+	--- Set to false to load the Spoon without starting it (no menu bar item)
+	--- Default: true
+	enabled = true,
+
+	--- Logger verbosity: "verbose", "debug", "info", "warning", "error"
+	--- Default: "info"
+	logLevel = "info",
+
+	--- Prevent display/system idle sleep when Hammerspoon starts
+	--- Sleep prevention is suspended while the screen is locked and restored on unlock
+	--- Default: true
+	startCaffeinated = true,
+
+	--- Show an alert when caffeinate is toggled
+	--- Default: true
+	showAlerts = true,
+
+	--- Custom menu bar icons: an image file path or an "ASCII:" diagram
+	--- (see hs.menubar:setIcon). Default: built-in steaming cup (on) / dimmed cup (off)
+	-- menuIcon = "~/Pictures/coffee-on.png",
+	-- menuIconOff = "~/Pictures/coffee-off.png",
+}

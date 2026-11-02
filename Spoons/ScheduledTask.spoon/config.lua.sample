@@ -1,0 +1,328 @@
+--- ScheduledTask.spoon Configuration File
+---
+--- Copy this file to config.lua and customize for your needs.
+--- Configuration is optional - tasks can also be added programmatically via init.lua.
+---
+--- Documentation: See Spoons/ScheduledTask.spoon/README.md
+
+return {
+    --- Global settings
+    enabled = true,                         -- false: Spoon loads but is not started (v2.2.0+)
+    logLevel = "info",                      -- Log level: "verbose", "debug", "info", "warning", "error" (default: "info")
+                                            -- "verbose" - Most detailed (all messages)
+                                            -- "debug"   - Debug messages and above
+                                            -- "info"    - Info messages and above (recommended)
+                                            -- "warning" - Warnings and errors only
+                                            -- "error"   - Errors only (least verbose)
+    showMenuBar = true,                     -- Show menu bar indicator (v1.2.0+)
+    showDisabledInMenu = true,              -- Show disabled tasks in menu (v1.5.0+, default: true)
+    showTaskCountInMenu = true,             -- Show task count summary in menu (v1.5.0+, default: true)
+    catchUpMinutes = 5,                     -- Missed minutes to catch up for times/timesRandom (v2.2.0+)
+    extraPath = {"/opt/homebrew/bin", "/usr/local/bin", "~/.local/bin"},  -- Prepended to task PATH (v2.2.0+)
+    maxOutputBytes = 1048576,               -- Output kept per run; more is dropped with a note (v2.2.0+)
+
+    --- Task definitions
+    tasks = {
+        --- Example 1: Simple interval-based task (with human-readable interval)
+        {
+            name = "hourly_cleanup",
+            command = "/usr/local/bin/cleanup.sh",
+            interval = "1h",                -- Human-readable: 1h (can also use raw: 3600)
+            enabled = true,
+            notify = false
+        },
+
+        --- Example 2: Task with day-of-week filter
+        {
+            name = "weekday_backup",
+            command = "/usr/local/bin/backup.sh",
+            args = {"--incremental"},       -- Command arguments
+            interval = 7200,                -- Every 2 hours
+            days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"},
+            enabled = true,
+            timeout = 600,                  -- 10 minute timeout
+            captureOutput = true,
+            outputFile = "~/.hammerspoon/logs/backup.log",
+            notify = false
+        },
+
+        --- Example 3: Task with output notification (human-readable interval)
+        {
+            name = "health_check",
+            command = "/usr/local/bin/health-check.sh",
+            interval = "5m",                -- Human-readable: 5m (can also use raw: 300)
+            captureOutput = true,
+            notify = true,                  -- Enable on-screen alerts
+            notifyLines = 3,                -- Show first 3 non-empty lines in alert
+            notifyDelay = 2,                -- Delay alert by 2 seconds
+            enabled = true
+        },
+
+        --- Example 3b: Task with error-only notifications (v1.8.0+)
+        {
+            name = "backup_monitor",
+            command = "/usr/local/bin/backup.sh",
+            interval = "1h",                -- Every hour
+            captureOutput = true,
+            notify = false,                 -- No notifications on success
+            notifyOnError = true,           -- Alert only on failure (v1.8.0+)
+            notifyLines = 5,                -- Show first 5 lines of error output
+            enabled = true
+        },
+
+        --- Example 4: Time-based scheduling (v1.1.0+)
+        {
+            name = "daily_reports",
+            command = "/usr/local/bin/generate-report.sh",
+            times = {"09:00", "12:00", "17:00"},  -- Run at 9 AM, noon, and 5 PM
+            captureOutput = true,
+            outputFile = "~/.hammerspoon/logs/reports.log",
+            enabled = true,
+            notify = false
+        },
+
+        --- Example 5: Random time window scheduling (v1.1.0+)
+        {
+            name = "randomized_check",
+            command = "/usr/local/bin/random-check.sh",
+            timesRandom = {
+                {start = "06:10", stop = "06:20"},  -- Once between 6:10-6:20 AM
+                {start = "14:30", stop = "14:45"}   -- Once between 2:30-2:45 PM
+            },
+            captureOutput = true,
+            notify = true,                  -- Enable on-screen alerts
+            notifyLines = 2,
+            enabled = true
+        },
+
+        --- Example 5b: Random time window with random arguments (v1.3.0+)
+        {
+            name = "randomized_backup",
+            command = "/usr/local/bin/backup.sh",
+            timesRandom = {
+                {start = "02:00", stop = "02:30"},  -- Once between 2:00-2:30 AM
+                {start = "14:00", stop = "14:30"}   -- Once between 2:00-2:30 PM
+            },
+            argsRandom = {
+                {"--type", "incremental"},
+                {"--type", "differential"},
+                {"--type", "full", "--compress"}
+            },
+            captureOutput = true,
+            outputFile = "~/.hammerspoon/logs/randomized-backup.log",
+            notify = true,
+            notifyLines = 2,
+            enabled = true
+        },
+
+        --- Example 6: Interval with time window restriction (v1.1.0+)
+        {
+            name = "business_hours_monitor",
+            command = "/usr/local/bin/monitor.sh",
+            interval = 600,                 -- Every 10 minutes
+            timeWindow = {start = "09:00", stop = "17:00"},  -- Only 9 AM - 5 PM
+            days = {"Monday", "Tuesday", "Wednesday", "Thursday", "Friday"},
+            enabled = true,
+            notify = false
+        },
+
+        --- Example 7: Task with callbacks (v1.1.0+)
+        {
+            name = "api_health",
+            command = "/usr/local/bin/api-check.sh",
+            interval = 300,
+            captureOutput = true,
+            notify = false,
+            onSuccess = function(stdout, stderr)
+                hs.alert.show("API health check passed")
+            end,
+            onError = function(exitCode, stdout, stderr)
+                hs.notify.new({
+                    title = "API Health Check Failed",
+                    informativeText = "Exit code: " .. exitCode,
+                    soundName = "Basso"
+                }):send()
+            end,
+            enabled = false                 -- Disabled by default
+        },
+
+        --- Example 8: Task with random arguments (v1.3.0+)
+        {
+            name = "random_backup",
+            command = "/usr/local/bin/backup.sh",
+            interval = "1h",                -- Human-readable: 1h
+            argsRandom = {
+                {"--type", "incremental"},              -- Sometimes incremental
+                {"--type", "differential"},             -- Sometimes differential
+                {"--type", "full", "--log", "Backup completed successfully"}  -- Spaces need no quoting
+            },
+            env = {BACKUP_PROFILE = "laptop"},  -- Extra environment variables (v2.2.0+)
+            captureOutput = true,
+            enabled = false,
+            notify = false
+        },
+
+        --- Example 9: Disabled task (configuration preserved)
+        {
+            name = "experimental_task",
+            command = "/usr/local/bin/experimental.sh",
+            interval = 1800,
+            enabled = false,                -- Disabled but can be enabled later
+            notify = false
+        },
+    }
+}
+
+---
+--- Configuration Reference (v2.2.0)
+---
+--- GLOBAL SETTINGS:
+---   enabled (optional)           - false: Spoon loads but init.lua does not start it (default: true) (v2.2.0+)
+---   showMenuBar (optional)       - Show menu bar indicator with task status (default: false) (v1.2.0+)
+---   showDisabledInMenu (optional) - Show disabled tasks in menu (default: true) (v1.5.0+)
+---   showTaskCountInMenu (optional)- Show task count summary in menu (default: true) (v1.5.0+)
+---   logLevel (optional)          - Log level: "verbose", "debug", "info", "warning", "error" (default: "info")
+---                                  "verbose" = most detailed, "error" = least verbose
+---   catchUpMinutes (optional)    - Missed minutes (timer drift, short sleep) caught up for times/timesRandom
+---                                  (default: 5). Longer gaps such as overnight sleep are not caught up. (v2.2.0+)
+---   extraPath (optional)         - Directories prepended to the task PATH if missing
+---                                  (default: {"/opt/homebrew/bin", "/usr/local/bin", "~/.local/bin"}) (v2.2.0+)
+---   maxOutputBytes (optional)    - Output (stdout + stderr) kept per run, at least 1024 (default: 1048576).
+---                                  More is dropped and the kept output ends with a "[output truncated ...]" note
+---   Unknown keys and values of the wrong type are ignored with a warning in the Console.
+---   A task with an unknown field, a wrong type or an invalid value is rejected (see the Console).
+---
+--- TASK FIELDS:
+---
+--- Required:
+---   name                    - Unique task identifier
+---   command                 - Absolute path to the executable (no shell is involved)
+---
+--- Scheduling (choose ONE):
+---   interval                - Interval in seconds between executions
+---                            Can use human-readable format: "30s", "5m", "2h" or raw number: 300
+---                            The first run after a reload is due `interval` after the last run (v2.2.0+)
+---   times                   - Array of times: {"09:00", "17:00"} (v1.1.0+)
+---   timesRandom             - Array of windows: {{start="09:00", stop="09:10"}} (v1.1.0+, v1.7.0: runtime probability-based)
+---                            A window cannot cross midnight (split it into two), and windows must not overlap
+---
+--- Arguments (choose ONE):
+---   args (optional)         - Table of command arguments (fixed); each is passed verbatim, spaces need no quoting
+---   argsRandom (optional)   - Array of argument sets, one randomly selected per execution (v1.3.0+)
+---                            The legacy "quoted:" prefix is still accepted and simply removed
+---   env (optional)          - Extra environment variables: {NAME = "value"} (v2.2.0+)
+---
+--- Filters & Restrictions:
+---   days (optional)         - Filter to days: {"Monday", "Fri"} (full names or 3-letter, any case; all if not specified)
+---   timeWindow (optional)   - Time restriction: {start="09:00", stop="17:00"}; may cross midnight (v1.1.0+)
+---   enabled (optional)      - Enable/disable task (default: true)
+---   timeout (optional)      - Command timeout in seconds (default: 300; 0 = no timeout).
+---                            The task gets SIGTERM, then SIGKILL 5 seconds later if still running
+---
+--- Output & Notifications:
+---   captureOutput (optional)- Capture stdout/stderr (default: false)
+---   outputFile (optional)   - Log file path, ~ expands to home
+---   notify (optional)       - Enable on-screen alerts on all executions (default: false)
+---   notifyOnError (optional)- Enable on-screen alerts only on failure (v1.8.0+, default: false)
+---   notifyLines (optional)  - Show alert with N non-empty output lines (requires notify or notifyOnError)
+---   notifyDelay (optional)  - Delay alert by N seconds (default: 0)
+---
+--- Callbacks (v1.1.0+):
+---   onSuccess (optional)    - Callback function(stdout, stderr); output is passed even without captureOutput
+---   onError (optional)      - Callback function(exitCode, stdout, stderr)
+---
+--- NOTES:
+--- - Tasks must have ONE scheduling mode: interval, times, OR timesRandom
+--- - timeWindow only applies to interval-based tasks
+--- - timesRandom runs once per window per day; the last run time is persisted, so a reload
+---   inside a window does not run the task a second time
+--- - Tasks inherit Hammerspoon's environment plus TERM=dumb, CI=true and extraPath; stdin is closed
+--- - Day names: "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"
+---
+--- SCHEDULING EXAMPLES:
+---
+--- 1. Interval-based (every N seconds or human-readable):
+---   {
+---       name = "every_hour",
+---       command = "/usr/local/bin/script.sh",
+---       interval = "1h"           -- Can use: "30s", "5m", "2h" or raw: 3600
+---   }
+---
+--- 2. Time-based (specific times):
+---   {
+---       name = "three_times_daily",
+---       command = "/usr/local/bin/script.sh",
+---       times = {"09:00", "13:00", "17:00"}
+---   }
+---
+--- 3. Random windows (once per window):
+---   {
+---       name = "random_execution",
+---       command = "/usr/local/bin/script.sh",
+---       timesRandom = {
+---           {start = "09:00", stop = "09:30"},
+---           {start = "15:00", stop = "15:30"}
+---       }
+---   }
+---
+--- 4. Interval with time restriction:
+---   {
+---       name = "business_hours_only",
+---       command = "/usr/local/bin/script.sh",
+---       interval = 600,
+---       timeWindow = {start = "09:00", stop = "17:00"}
+---   }
+---
+--- 5. Random arguments (v1.3.0+):
+---   {
+---       name = "varied_backup",
+---       command = "/usr/local/bin/backup.sh",
+---       interval = "1h",
+---       argsRandom = {
+---           {"--type", "incremental"},
+---           {"--type", "differential"},
+---           {"--type", "full", "--log", "Backup completed"}
+---       }
+---   }
+---
+--- 6. Arguments with spaces (passed verbatim, no quoting needed):
+---   {
+---       name = "command_with_spaces",
+---       command = "/usr/local/bin/command",
+---       args = {"-p", "Hello World", "--flag"},  -- "Hello World" arrives as one argument
+---       interval = "30s"
+---   }
+---
+--- 7. Error-only notifications (v1.8.0+):
+---   {
+---       name = "silent_backup",
+---       command = "/usr/local/bin/backup.sh",
+---       interval = "1h",
+---       captureOutput = true,
+---       notify = false,                -- No notifications on success
+---       notifyOnError = true,          -- Alert only on failure
+---       notifyLines = 5
+---   }
+---
+--- FULL EXAMPLE with all options:
+---   {
+---       name = "comprehensive_example",
+---       command = "/usr/local/bin/script.sh",
+---       args = {"-v", "--flag"},
+---       interval = 3600,
+---       days = {"Monday", "Wednesday", "Friday"},
+---       timeWindow = {start = "09:00", stop = "17:00"},
+---       enabled = true,
+---       timeout = 600,
+---       captureOutput = true,
+---       outputFile = "~/.hammerspoon/logs/script.log",
+---       notify = true,
+---       notifyLines = 5,
+---       notifyDelay = 1,
+---       onSuccess = function(stdout, stderr)
+---           hs.alert.show("Task completed successfully")
+---       end,
+---       onError = function(exitCode, stdout, stderr)
+---           hs.alert.show("Task failed: " .. exitCode)
+---       end
+---   }

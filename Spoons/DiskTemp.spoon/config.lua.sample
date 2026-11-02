@@ -1,0 +1,63 @@
+-- DiskTemp Spoon Configuration File
+--
+-- Copy this file to 'config.lua' in the same directory and customize as needed.
+-- If this file doesn't exist, DiskTemp will auto-detect external disks.
+
+return {
+    -- Set to false to load the Spoon without starting it
+    -- Default: true
+    enabled = true,
+
+    -- Logger verbosity: "verbose", "debug", "info", "warning", "error"
+    -- Default: "info"
+    logLevel = "info",
+
+    -- Array of device paths to monitor
+    -- If set, auto-detection is not used. Find device paths with: diskutil list
+    -- Default: not set (auto-detect external disks)
+    -- diskDevices = {"/dev/disk4", "/dev/disk5"},
+
+    -- Enable auto-detection of external physical disks
+    -- Only used if diskDevices is nil or empty
+    -- Default: true
+    autoDetectExternal = true,
+
+    -- Update interval in seconds
+    -- Default: 15
+    updateInterval = 15,
+
+    -- Show device name in menu bar when monitoring multiple disks
+    -- Format: "D4|45°" (only shown if multiple disks are monitored)
+    -- Default: true
+    showDeviceName = true,
+
+    -- Separator between multiple disk temperatures
+    -- Default: " | "
+    separator = " | ",
+
+    -- Temperature unit symbol shown after the value
+    -- Default: "°"
+    temperatureUnit = "°",
+
+    -- Path to smartctl (brew install smartmontools)
+    -- Default: "/opt/homebrew/bin/smartctl"
+    smartctlPath = "/opt/homebrew/bin/smartctl",
+
+    -- Arguments passed to smartctl before the device path
+    -- Some USB enclosures need {"-A", "-d", "sat"}
+    -- Default: {"-A"}
+    smartctlArgs = {"-A"},
+
+    -- Seconds before a stuck smartctl/diskutil call is given up
+    -- (it gets SIGTERM, then SIGKILL 5 seconds later)
+    -- Default: 20
+    commandTimeout = 20,
+
+    -- Show an alert when a disk returns no temperature
+    -- Default: false
+    showAlerts = false,
+
+    -- Show a dialog with install instructions when smartctl is missing
+    -- Default: true
+    warnMissingSmartctl = true,
+}
