@@ -12,7 +12,8 @@ logs/
 docs
 tests
 
-# Local config
+# Local configs
+AGENTS.md
 CLAUDE.md
 .claude/settings.local.json
 
